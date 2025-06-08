@@ -7,16 +7,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 function App() {
   const [todo, settodo] = useState('')
-  const [todos, setTodos] = useState(()=>{
+  const [todos, setTodos] = useState(() => {
     let data_string = localStorage.getItem('todos')
-    if(data_string){
+    if (data_string) {
       return JSON.parse(data_string)
-    }else{
+    } else {
       return []
     }
   })
 
-  const ref=useRef(0)
+  const ref = useRef(0)
+
+
 
   const handlechange = (e) => {
     settodo(e.target.value)
@@ -26,20 +28,20 @@ function App() {
     if (todo.length > 3) {
       setTodos([...todos, { id: uuidv4(), title: todo, isCompleted: false }])
       settodo('')
-      
+
     }
   }
 
   const toggleStatus = (e, id) => {
     let index = todos.findIndex(item => {
       return item.id === id
-      
+
     })
 
     let newTodos = [...todos]
     newTodos[index].isCompleted = !newTodos[index].isCompleted
     setTodos(newTodos)
-    
+
   }
 
   const handledelete = (id) => {
@@ -48,7 +50,7 @@ function App() {
     })
 
     setTodos(toDos)
-    
+
 
   }
 
@@ -63,7 +65,7 @@ function App() {
     })
 
     setTodos(toDos)
-    
+
   }
 
   useEffect(() => {
@@ -78,8 +80,18 @@ function App() {
     ref.current.focus()
   }, [todos])
 
-  const saveLs=()=>{
-    localStorage.setItem('todos',JSON.stringify(todos))
+  const track = () => {
+    let tot = todos.length;
+    if (tot === 0) return 0;
+    let done = todos.filter(item => item.isCompleted).length;
+    return done / tot;
+  };
+
+
+
+
+  const saveLs = () => {
+    localStorage.setItem('todos', JSON.stringify(todos))
   }
 
   return (
@@ -110,7 +122,7 @@ function App() {
               </div>
             </div>
           ))}
-          
+
         </div>
 
         <div className="done w-[40vw] bg-gray-300 h-[70vh] flex-col justify-center items-center overflow-y-scroll">
@@ -131,11 +143,11 @@ function App() {
         </div>
       </div>
 
-      <div className='border-2 w-full h-20 justify-center items-center' >
-          <div className="bar flex items-center justify-evenly">
-            <span>Track Bar</span>
-            <div className='bg-red-400 w-[80%] h-[5vh] border-2'></div>
-          </div>
+      <div className="bar flex items-center justify-center gap-5  p-3">
+        <span>Track Bar</span>
+        <div className=' w-[40%] h-[5vh] border-2 rounded-xl'>
+          <div className="progress h-full bg-gray-700 rounded" style={{ width: `${track() * 100}%` }} ></div>
+        </div>
       </div>
 
     </>
